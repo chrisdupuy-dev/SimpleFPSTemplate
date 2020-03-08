@@ -10,10 +10,10 @@
 AFPSObjectiveActor::AFPSObjectiveActor()
 {
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
-	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	RootComponent = MeshComp;
 	
-	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
+	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("InnerSphereComp"));
 	SphereComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly); // Queries are line traces/overlap events
 	SphereComp->SetCollisionResponseToAllChannels(ECR_Ignore);
 	SphereComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
