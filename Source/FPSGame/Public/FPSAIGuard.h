@@ -7,6 +7,7 @@
 #include "FPSAIGuard.generated.h"
 
 class UPawnSensingComponent;
+class ATargetPoint;
 
 UENUM(BlueprintType)
 enum class EAIState : uint8
@@ -38,6 +39,14 @@ protected:
 	UFUNCTION()
 	void OnNoiseHeard(APawn* NoiseInstigator, const FVector& Location, float Volume);
 
+	UPROPERTY(EditInstanceOnly, Category = "AI")
+	TArray<ATargetPoint*> PatrolPath;
+
+	UPROPERTY(BlueprintReadOnly, Category = "AI")
+	ATargetPoint* CurrentTargetLocation;
+
+	int32 PatrolPathCurrentIndex = 0;
+	
 	FRotator OriginalRotation;
 
 	UFUNCTION()
@@ -45,12 +54,16 @@ protected:
 
 	FTimerHandle TimerHandle_ResetOrientation;
 
+	UPROPERTY(BlueprintReadOnly, Category = "AI")
 	EAIState GuardState;
 
 	void SetGuardState(EAIState NewState);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "AI")
 	void OnStateChanged(EAIState NewState);
+
+	UFUNCTION(BlueprintCallable, Category = "AI")
+	void OnCurrentTargetLocationReached();
 	
 public:	
 	// Called every frame

@@ -23,6 +23,11 @@ void AFPSAIGuard::BeginPlay()
 	Super::BeginPlay();
 
 	OriginalRotation = GetActorRotation();
+
+	if (PatrolPath.Num() > 0)
+	{
+		CurrentTargetLocation = PatrolPath[PatrolPathCurrentIndex];
+	}
 	
 	PawnSensingComponent->OnSeePawn.AddDynamic(this, &AFPSAIGuard::OnPawnSeen);
 	PawnSensingComponent->OnHearNoise.AddDynamic(this, &AFPSAIGuard::OnNoiseHeard);
@@ -97,4 +102,16 @@ void AFPSAIGuard::SetGuardState(EAIState NewState)
 void AFPSAIGuard::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AFPSAIGuard::OnCurrentTargetLocationReached()
+{
+	PatrolPathCurrentIndex++;
+
+	if (PatrolPathCurrentIndex > PatrolPath.Num() - 1)
+	{
+		PatrolPathCurrentIndex = 0;
+	}
+
+	CurrentTargetLocation = PatrolPath[PatrolPathCurrentIndex];
 }
