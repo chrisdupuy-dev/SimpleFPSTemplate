@@ -5,6 +5,7 @@
 #include "DrawDebugHelpers.h"
 #include "FPSGameMode.h"
 #include "TimerManager.h"
+#include "UnrealNetwork.h"
 
 // Sets default values
 AFPSAIGuard::AFPSAIGuard()
@@ -51,6 +52,11 @@ void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
 	}
 }
 
+void AFPSAIGuard::OnRep_GuardState()
+{
+	OnStateChanged(GuardState);
+}
+
 void AFPSAIGuard::OnNoiseHeard(APawn* NoiseInstigator, const FVector& Location, float Volume)
 {
 	if (GuardState == EAIState::Alerted)
@@ -94,8 +100,9 @@ void AFPSAIGuard::SetGuardState(EAIState NewState)
 	}
 
 	GuardState = NewState;
-
-	OnStateChanged(NewState);
+	OnRep_GuardState();
+	
+	OnStateChanged(NewState); // remove?
 }
 
 // Called every frame
@@ -114,4 +121,11 @@ void AFPSAIGuard::OnCurrentTargetLocationReached()
 	}
 
 	CurrentTargetLocation = PatrolPath[PatrolPathCurrentIndex];
+}
+
+void AFPSAIGuard::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AFPSAIGuard, GuardState);
 }
